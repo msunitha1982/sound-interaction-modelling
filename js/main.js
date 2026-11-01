@@ -16,9 +16,6 @@
   var playBtn = document.getElementById('btn-play');
   var stepBtn = document.getElementById('btn-step');
   var resetBtn = document.getElementById('btn-reset');
-  var aboutBtn = document.getElementById('btn-about');
-  var aboutBox = document.getElementById('about');
-  var aboutClose = document.getElementById('btn-about-close');
   var speedInputs = footer.querySelectorAll('input[name="speed"]');
 
   var clock = { playing: true, speed: 1 };
@@ -122,7 +119,6 @@
     tabs[scene.index].setAttribute('aria-selected', 'true');
     tabs[scene.index].setAttribute('tabindex', '0');
     footer.classList.toggle('summary-mode', !!scene.isSummary);
-    closeAbout();
     resetClock();
     scene.enter();
     // Keep an alias hash (#reflection) if it already names this scene.
@@ -172,38 +168,6 @@
   resetBtn.addEventListener('click', function () {
     resetClock();
     current.reset();
-  });
-
-  // ---------- About the numbers ----------
-
-  ui.aboutLines.forEach(function (line) {
-    document.getElementById('about-list').appendChild(ui.el('li', { text: line }));
-  });
-
-  function openAbout() {
-    aboutBox.hidden = false;
-    aboutBtn.setAttribute('aria-expanded', 'true');
-    aboutBox.focus();
-  }
-
-  function closeAbout() {
-    if (aboutBox.hidden) { return; }
-    aboutBox.hidden = true;
-    aboutBtn.setAttribute('aria-expanded', 'false');
-  }
-
-  aboutBtn.addEventListener('click', function () {
-    if (aboutBox.hidden) { openAbout(); } else { closeAbout(); }
-  });
-  aboutClose.addEventListener('click', function () {
-    closeAbout();
-    aboutBtn.focus();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !aboutBox.hidden) {
-      closeAbout();
-      aboutBtn.focus();
-    }
   });
 
   // ---------- Frame loop ----------

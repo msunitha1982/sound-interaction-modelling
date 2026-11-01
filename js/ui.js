@@ -45,7 +45,7 @@ SoundSim.ui = (function () {
       el('p', { className: 'goal', text: scene.goal })
     ]);
     var sim = el('div', { className: 'sim-area' });
-    var caption = el('div', { className: 'caption-bar', 'aria-live': 'polite' });
+    var caption = el('div', { className: 'caption-bar is-empty', 'aria-live': 'polite' });
     var think = el('section', { className: 'think-panel', 'aria-label': 'Think' });
     left.appendChild(titleStrip);
     left.appendChild(sim);
@@ -54,6 +54,13 @@ SoundSim.ui = (function () {
     root.appendChild(left);
     root.appendChild(right);
     return { sim: sim, caption: caption, think: think, colA: colA, colB: colB };
+  }
+
+  // Caption bar text. The bar is hidden while there is nothing to say
+  // (for example while no sound is playing) instead of showing an empty box.
+  function setCaption(bar, text) {
+    if (bar.textContent !== text) { bar.textContent = text; }
+    bar.classList.toggle('is-empty', !text);
   }
 
   function panel(title) {
@@ -66,11 +73,11 @@ SoundSim.ui = (function () {
     return { root: root, body: body };
   }
 
-  // "Ideas you'll need": collapsible, open by default.
+  // "Key ideas" panel: collapsible, open by default.
   function ideasPanel(lines) {
     var list = el('ul', null, lines.map(function (line) { return el('li', { text: line }); }));
     var details = el('details', { className: 'panel ideas', open: '' }, [
-      el('summary', { text: 'Ideas you’ll need' }),
+      el('summary', { text: 'Key ideas' }),
       list
     ]);
     return {
@@ -305,7 +312,7 @@ SoundSim.ui = (function () {
 
   // Think panel: PREDICT, then RUN, then RESULT (CLAUDE.md section 10).
   // It never blocks the sim. opts: question, options [{value, label}],
-  // correct, runText, keyIdea, onChange() (called after record and reveal).
+  // correct, runText, mainIdea, onChange() (called after record and reveal).
   function thinkPanel(container, opts) {
     var stage = 'predict';
     var choice = null;
@@ -343,7 +350,7 @@ SoundSim.ui = (function () {
       matchText
     ]));
     resultBox.appendChild(el('div', { className: 'key-idea' }, [
-      el('p', { className: 'think-q' }, [el('strong', { className: 'think-label', text: 'Key idea: ' }), opts.keyIdea])
+      el('p', { className: 'think-q' }, [el('strong', { className: 'think-label', text: 'Main idea: ' }), opts.mainIdea])
     ]));
 
     function render() {
@@ -430,21 +437,10 @@ SoundSim.ui = (function () {
     return { el: tray, sync: sync };
   }
 
-  // Text of the "About the numbers" box (CLAUDE.md section 9). The Summary
-  // tab prints the same lines.
-  var aboutLines = [
-    'The animation is slowed down. Normal view is about 400 times slower than real sound. Slow view is about 1,600 times slower. In the room scene, Normal view is 40 times slower and Slow view is 160 times slower. The current factor is always shown in a corner of the sim area.',
-    'Molecule motion is exaggerated so it can be seen. Real air molecules move far less in a sound wave.',
-    'The heat glow is exaggerated. The warming caused by ordinary sound is far too small to feel.',
-    'On the far side of a wall, the wave is drawn larger when Magnify far side is on, so it can be seen. The label shows how much larger, up to 200 times.',
-    'Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and frequency in more detail.',
-    'Audio levels are compressed so very quiet sounds can still be heard.',
-    'In the room scene, distances and echo delays are real. Only the animation is slowed.'
-  ];
-
   return {
     el: el,
     sceneLayout: sceneLayout,
+    setCaption: setCaption,
     panel: panel,
     ideasPanel: ideasPanel,
     note: note,
@@ -456,7 +452,6 @@ SoundSim.ui = (function () {
     materialPicker: materialPicker,
     simCanvas: simCanvas,
     thinkPanel: thinkPanel,
-    toolTray: toolTray,
-    aboutLines: aboutLines
+    toolTray: toolTray
   };
 })();

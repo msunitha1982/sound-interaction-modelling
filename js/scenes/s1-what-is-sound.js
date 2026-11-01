@@ -208,9 +208,7 @@
   function caption() {
     var f = state.pitch;
     var lam = lambdaCm().toFixed(1);
-    if (!state.soundOn) {
-      return 'The speaker is off. The molecules are evenly spaced. Turn the sound on.';
-    }
+    if (!state.soundOn) { return ''; } // caption bar hidden while no sound is playing
     if (tapeOnTube()) {
       return 'Measuring tape reads ' + tapeCm() + ' cm between two compressions. Wavelength = speed of sound / frequency = 34,300 cm/s / ' +
         fmtHz(f) + ' Hz = ' + lam + ' cm.';
@@ -492,8 +490,7 @@
     if (state.probe.out) { drawProbe(ctx); }
     if (state.tape.out) { drawTape(ctx); }
 
-    var text = caption();
-    if (c.caption.textContent !== text) { c.caption.textContent = text; }
+    ui.setCaption(c.caption, caption());
   }
 
   // ---------- Controls ----------
@@ -514,7 +511,7 @@
     slug: 'sound',
     tabLabel: 'What is sound?',
     title: 'What is sound?',
-    goal: 'What actually travels when sound moves through air?',
+    goal: 'What is actually happening when sound moves through air?',
     preview: preview,
     hasCheck: true,
 
@@ -535,7 +532,7 @@
         ],
         correct: 'b',
         runText: 'Turn the sound on and watch the tracer molecule.',
-        keyIdea: 'Sound is a disturbance that travels through a material. The molecules only move back and forth around one place and pass the disturbance to their neighbors. Frequency is how many compressions pass each second. We hear it as pitch. Amplitude is how far the molecules move. We hear it as loudness.',
+        mainIdea: 'Sound is a disturbance that travels through a material. The molecules only move back and forth around one place and pass the disturbance to their neighbors. Frequency is how many compressions pass each second. We hear it as pitch. Amplitude is how far the molecules move. We hear it as loudness.',
         onChange: checkDone
       });
 
@@ -598,7 +595,6 @@
 
       lay.colA.appendChild(c.ideas.root);
       lay.colA.appendChild(sound.root);
-      lay.colA.appendChild(ui.note('Headphones work best.'));
       lay.colB.appendChild(show.root);
       lay.colB.appendChild(tools.root);
     },
