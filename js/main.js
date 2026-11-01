@@ -35,6 +35,8 @@
     stage.style.left = Math.round((window.innerWidth - STAGE_W * s) / 2) + 'px';
     stage.style.top = Math.round((window.innerHeight - STAGE_H * s) / 2) + 'px';
     S.stageScale = s;
+    // Canvases size their backing store from the scale.
+    window.dispatchEvent(new Event('soundsim:resize'));
   }
 
   // ---------- Progress marks ----------
@@ -147,11 +149,14 @@
     clock.playing = true;
     clock.speed = 1;
     renderClock();
+    S.audio.setPaused(false);
   }
 
+  // Pause freezes simulation time and audio.
   playBtn.addEventListener('click', function () {
     clock.playing = !clock.playing;
     renderClock();
+    S.audio.setPaused(!clock.playing);
   });
 
   stepBtn.addEventListener('click', function () {
@@ -223,14 +228,17 @@
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       window.cancelAnimationFrame(rafId);
+      S.audio.setPaused(true);
     } else {
+      S.audio.setPaused(!clock.playing);
       startLoop();
     }
   });
 
   // ---------- Start ----------
 
-  S.main = { markDone: markDone };
+  // Scenes read clock.speed (1 Normal, 0.25 Slow) for the slowdown label.
+  S.main = { markDone: markDone, clock: clock };
 
   buildTabs();
   fit();

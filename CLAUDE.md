@@ -22,6 +22,8 @@ Priority order when things conflict: (1) correct science, (2) clarity, (3) runs 
 
 If they conflict, CLAUDE.md wins on technical and UI rules, scene-navigation.md wins on scene content. If something is unclear, ask. Do not guess. Every decision the owner makes is written back into these docs so they stay the source of truth.
 
+Workflow (owner decision): after finishing each big piece of work (a stage, or stages run back to back), commit, push, and open a pull request into `main` so the owner can merge it and test on GitHub Pages.
+
 ## 3. Tech constraints
 
 - Plain HTML, CSS, vanilla JavaScript. No framework, no build step, no npm packages, no CDN, no web fonts, no external requests of any kind.
