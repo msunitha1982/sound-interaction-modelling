@@ -18,8 +18,9 @@ Priority order when things conflict: (1) correct science, (2) clarity, (3) runs 
 
 - CLAUDE.md (this file): purpose, technical rules, UI rules, model, audio.
 - scene-navigation.md: the six tabs, navigation behavior, and exact content for each scene (goal question, controls, captions, predictions, key ideas, checkmark rules).
+- kickoff-prompt.md: the staged build plan (Stage 0 to Stage 7) and the checks and report required after each stage.
 
-If they conflict, CLAUDE.md wins on technical and UI rules, scene-navigation.md wins on scene content. If something is unclear, ask. Do not guess.
+If they conflict, CLAUDE.md wins on technical and UI rules, scene-navigation.md wins on scene content. If something is unclear, ask. Do not guess. Every decision the owner makes is written back into these docs so they stay the source of truth.
 
 ## 3. Tech constraints
 
@@ -35,6 +36,7 @@ If they conflict, CLAUDE.md wins on technical and UI rules, scene-navigation.md 
 File layout:
 
 ```
+CLAUDE.md, scene-navigation.md, kickoff-prompt.md   project docs
 index.html
 css/style.css
 js/model.js        materials and the reflect/absorb/transmit calculation (no DOM; runnable in Node)
@@ -61,12 +63,16 @@ Mirror PhET's conventions, not its assets. Do not copy PhET's logo, icons, sound
   - Sim area, left (about 700 x 340).
   - Caption bar directly under the sim area (700 x 40): one or two plain sentences that update live.
   - Think panel under the caption bar (700 x about 90): prediction, then result, then key idea. One slot whose content changes as the student progresses.
-  - Right column (about 300 wide): "Ideas you'll need" panel (collapsible, open by default), then control panels, then the tools tray.
+  - Right column (about 300 wide): "Ideas you'll need" panel (collapsible, open by default), then control panels, then the tools tray (Scene 1 only).
+  - Fitting the right column: lay radio groups out in 2 or 3 columns and put short controls side by side where possible. If a column still does not fit, shrink the sim area and widen the right column. Never shrink text below the minimum and never scroll the right column.
+  - Summary tab: the page uses the whole area above the footer, in two columns, and scrolls inside the stage if it does not fit. On that tab the footer shows only "About the numbers"; the speed toggle, Play/Pause, Step, and Reset All are hidden.
   - Footer strip (about 36 tall), above the nav bar: speed toggle (Normal / Slow) at left, Play/Pause and Step at center, Reset All at right.
   - Nav bar (about 48 tall) at the bottom: one tab per scene, left to right, with a small hand-drawn SVG preview in each tab.
 - Controls follow PhET habits: sliders show min and max at the ends and the current value with units; radio buttons for either/or; checkboxes for show/hide; titled panels with a thin border; draggable tools picked up from a tray.
 - Reset All returns the current scene to its clean defaults (controls, tool positions, prediction state). It does not clear checkmarks. No confirmation dialog.
 - Play/Pause freezes simulation time and audio. Step advances animation time by 1/20 s while paused.
+- Speed toggle: Normal and Slow. Slow runs the animation 4 times slower than Normal. Normal is 400x slower than real sound (40x in Scene 2); Slow is 1,600x (160x in Scene 2). Scene 2 uses its own factor because at 400x a clap would take about a minute to cross the 30 m room.
+- Scene timers (reveal triggers such as "6 s", and the "last 4 s" caption windows) count real seconds while playing, not slowed animation time, so they take the same wall-clock time in Normal and Slow. They do not advance while paused or on Step. Probe charts and other plots of the wave use animation time.
 - Minimum text size is 13 stage units. Body is 14.
 
 ## 5. Visual style
@@ -134,19 +140,21 @@ T = min( 10^(-TL/10), 1 - R )    (transmitted share)
 A = 1 - R - T                    (absorbed share, becomes thermal energy)
 ```
 
-R + A + T must equal 1 exactly. Display rounding: round R and T, then show A as 100 minus both so the displayed numbers always total 100.0%. Show values under 0.1% as "<0.1%".
+R + A + T must equal 1 exactly. Display rounding: round R and T to one decimal place, then show A as 100 minus both so the displayed numbers always total 100.0%. Show values under 0.1% as "<0.1%".
+
+Effective transmission loss: `TL_eff = -10 * log10(T)`. When T is capped at 1 - R, the summed TL no longer matches T, so every dB readout, level meter, caption, challenge condition, and audio setting uses TL_eff. The summed TL is used only to compute T. This keeps the dB values and the percentages consistent. dB values are shown to one decimal place. Wherever these docs write {TL} in on-screen text, it means TL_eff.
 
 Starting material table (teaching values, tune so qualitative ordering holds and challenges stay passable; they are NOT measurements and the UI says so):
 
-| Material | R | TL_ref (dB at 500 Hz) | t_ref (cm) | Thickness range (cm) | s_t (dB per doubling) | s_f (dB per doubling of pitch) |
-|---|---|---|---|---|---|---|
-| Concrete | 0.97 | 45 | 10 | 5 to 30 | 6 | 5 |
-| Wood | 0.85 | 22 | 4 | 1 to 10 | 5 | 5 |
-| Glass | 0.95 | 30 | 1 | 0.5 to 3 | 5 | 5 |
-| Foam | 0.15 | 6 | 5 | 1 to 15 | 3 | 4 |
-| Curtain | 0.30 | 4 | 1 | 0.5 to 3 | 3 | 3 |
+| Material | R | TL_ref (dB at 500 Hz) | t_ref (cm) | Thickness range (cm) | Slider step (cm) | s_t (dB per doubling) | s_f (dB per doubling of pitch) |
+|---|---|---|---|---|---|---|---|
+| Concrete | 0.97 | 45 | 10 | 5 to 30 | 1 | 6 | 5 |
+| Wood | 0.85 | 22 | 4 | 1 to 10 | 0.5 | 5 | 5 |
+| Glass | 0.95 | 30 | 1 | 0.5 to 3 | 0.1 | 5 | 5 |
+| Foam | 0.15 | 6 | 5 | 1 to 15 | 0.5 | 3 | 4 |
+| Curtain | 0.30 | 4 | 1 | 0.5 to 3 | 0.1 | 3 | 3 |
 
-Defaults: each material starts at its t_ref.
+Defaults: each material starts at its t_ref. Choosing a different material resets the thickness slider to that material's t_ref and range.
 
 Wave field for the 1D scenes (no solver, just superposed traveling waves). Pitch f, wavelength lambda = 34300 / f in cm. Incident wave amplitude A0 (set by volume).
 - Before the wall: incident wave plus a reflected wave of amplitude A0 * sqrt(R) traveling the other way.
@@ -166,28 +174,29 @@ Web Audio API only. No audio files. Audio is started by the first button click (
 - Source types: Tone (sine at the pitch), Buzz (sawtooth at the pitch, rich in harmonics so muffling is audible), Clap (60 ms noise burst, band-limited).
 - Keep pitch in 150 to 2000 Hz so it is audible on small speakers. Show a note recommending headphones in Scene 1.
 - Master gain is capped at a comfortable level. Ramp gain over 20 ms on every change and on start and stop to avoid clicks. Stop all audio immediately when leaving a scene or when the tab is hidden.
-- Reflection: direct clap, then the echo at the real delay, with amplitude scaled by sqrt(R) and by distance.
+- Reflection: direct clap with amplitude scaled by 1 / direct path, then the echo at the real delay with amplitude scaled by sqrt(R) / reflected path.
 - Absorption: the echo amplitude is sqrt(R) times the direct amplitude, so soft materials give a clearly quieter echo.
-- Transmission: far-side sound uses a low-pass filter and a gain. Starting values: cutoff = clamp(8000 * 10^(-TL/40), 1.2 * pitch, 8000) Hz; gain = max(10^(-0.6 * TL / 20), 0.01) times the near-side gain. The 0.6 factor compresses the range so a 45 dB reduction stays quiet but audible on a laptop. Tune by ear and keep the on-screen note that audio is compressed.
+- Transmission: far-side sound uses a low-pass filter and a gain, both computed from TL_eff. Starting values: cutoff = clamp(8000 * 10^(-TL_eff/40), 1.2 * pitch, 8000) Hz; gain = max(10^(-0.6 * TL_eff / 20), 0.01) times the near-side gain. The 0.6 factor compresses the range so a 45 dB reduction stays quiet but audible on a laptop. Tune by ear and keep the on-screen note that audio is compressed.
 - Every sound has a matching visual cue (level meter or waveform) so it works in a noisy room or for a student who cannot hear it.
 
 ## 9. Honesty notes (must be visible in the UI)
 
-A button labeled "About the numbers" (in the footer area, and again in the Summary tab) opens a plain text box listing:
+A button labeled "About the numbers" (in the footer on every tab, including Summary) opens a plain text box. The Summary tab also prints the same text. The box text, as written:
 
-- The animation is slowed down. Normal view is about 400 times slower than real sound; Slow view about 1,600 times slower. The current factor is always displayed in a corner of the sim area.
-- Molecule motion is exaggerated so it can be seen. Real air molecules move far less in a sound wave.
-- The heat glow is exaggerated. The warming caused by ordinary sound is far too small to feel.
-- On the far side of a wall, the wave is magnified for visibility when "Magnify far side" is on. Show the multiplier (for example "Far side drawn 40x larger").
-- Material values are simplified teaching values, not measurements. Real walls depend on more things (construction, gaps, frequency in more detail).
-- Audio levels are compressed so very quiet sounds can still be heard.
-- In the room scene, distances and echo delays are real; only the animation is slowed.
+- "The animation is slowed down. Normal view is about 400 times slower than real sound. Slow view is about 1,600 times slower. In the room scene, Normal view is 40 times slower and Slow view is 160 times slower. The current factor is always shown in a corner of the sim area."
+- "Molecule motion is exaggerated so it can be seen. Real air molecules move far less in a sound wave."
+- "The heat glow is exaggerated. The warming caused by ordinary sound is far too small to feel."
+- "On the far side of a wall, the wave is drawn larger when Magnify far side is on, so it can be seen. The label shows how much larger, up to 200 times."
+- "Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and pitch in more detail."
+- "Audio levels are compressed so very quiet sounds can still be heard."
+- "In the room scene, distances and echo delays are real. Only the animation is slowed."
 
 ## 10. Shared components
 
 - Energy bar: one horizontal stacked bar, always in the order Reflected, Absorbed, Transmitted, always the outcome colors and patterns. Percentages in monospace under each segment with a leader line when a segment is too narrow. A segment never shrinks below 2 px so a tiny transmitted share is still visible. Caption under the bar: "Total: 100%".
 - Level meter: vertical bar with dB scale, labeled "relative to the sound arriving at the wall".
-- Tools tray: Ruler and Probe icons in a titled panel. Dragging a tool out places it in the sim; dragging it back (or Reset All) returns it. The ruler reads in cm and can be used to measure wavelength. The probe shows a small strip chart of pressure against time at the spot where it sits, covering the last 3 s of animation time.
+- Tools tray (Scene 1 only): Measuring tape and Probe icons in a titled panel. Dragging a tool out places it in the sim; dragging it back (or Reset All) returns it. The measuring tape works like PhET's: drag its body to move it and drag its end to stretch it. It reads its own length in cm, to the nearest cm, so a student who lines it up with two compressions measures the wavelength. The probe shows a small strip chart of pressure against time at the spot where it sits, covering the last 3 s of animation time.
+- Far-side magnifier (Scenes 4 and 5): the far-side wave is drawn N times larger. N is the largest value from 1, 2, 5, 10, 20, 50, 100, 200 that keeps the drawn far-side wave no taller than half the incoming wave. N never exceeds 200. Label: "Far side drawn {N}x larger." When the cap applies (the wave would need more than 200x to reach half height): "Far side drawn 200x larger (the maximum)." When N is 1: "Far side drawn at true size."
 - Pressure graph (optional checkbox in Scene 1): pressure against position, aligned under the tube so peaks sit directly under the compressions.
 - Caption bar: text is generated from the current state, never canned. See scene-navigation.md for templates.
 - Think panel: PREDICT, then RUN, then RESULT. The sim is fully usable at every step; the panel never blocks anything.
@@ -195,7 +204,7 @@ A button labeled "About the numbers" (in the footer area, and again in the Summa
 ## 11. Code conventions
 
 - Each scene exposes `init(root)`, `enter()`, `leave()`, `update(dt)`, `draw()`, `reset()`. `leave()` stops audio. `enter()` resets to defaults.
-- Simulation time advances by `dt * speedFactor` only while playing. Clamp dt to 50 ms so a slow frame never causes a jump.
+- Simulation time advances by `dt * speedFactor` only while playing (speedFactor 1 in Normal, 0.25 in Slow). Clamp dt to 50 ms so a slow frame never causes a jump. Scenes receive both values as `update(dt, simDt)`: `dt` is real seconds (for scene timers, see section 4) and `simDt` is animation seconds. Step calls `update(0, 1/20)`.
 - Keep scene state in one object per scene so Reset All is a single call.
 - Comments explain the physics where it is not obvious. No dead code, no unused features.
 
