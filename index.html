@@ -19,19 +19,13 @@
       <button type="button" class="btn" id="btn-play">Pause</button>
       <button type="button" class="btn" id="btn-step" disabled>Step</button>
     </div>
-    <div class="footer-right">
-      <button type="button" class="btn" id="btn-about" aria-expanded="false" aria-controls="about">About the numbers</button>
-      <button type="button" class="btn sim-control" id="btn-reset">Reset All</button>
+    <div class="footer-right sim-control">
+      <button type="button" class="btn" id="btn-reset">Reset All</button>
     </div>
   </div>
 
   <div class="nav" id="nav" role="tablist" aria-label="Scenes"></div>
 
-  <div class="about" id="about" role="dialog" aria-labelledby="about-title" tabindex="-1" hidden>
-    <h2 id="about-title">About the numbers</h2>
-    <ul id="about-list"></ul>
-    <button type="button" class="btn" id="btn-about-close">Close</button>
-  </div>
 </div>
 
 <script src="js/model.js"></script>

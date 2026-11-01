@@ -127,6 +127,9 @@ html, body {
   overflow: hidden;
 }
 
+/* Keeps its space so the layout does not jump. */
+.caption-bar.is-empty { visibility: hidden; }
+
 .think-panel {
   flex: none;
   height: 152px;
@@ -432,34 +435,6 @@ input[type="range"]:disabled::-moz-range-thumb { border-color: var(--disabled); 
 }
 
 .tab-check { flex: none; }
-
-/* ---------- About the numbers box ---------- */
-
-.about {
-  position: absolute;
-  left: 50px;
-  top: 70px;
-  width: 600px;
-  padding: 10px 14px 12px;
-  background: var(--sim);
-  border: 1px solid var(--ink);
-  border-radius: 2px;
-}
-
-.about[hidden] { display: none; }
-
-.about h2 {
-  margin: 0 0 6px;
-  font-family: var(--serif);
-  font-size: 16px;
-}
-
-.about ul {
-  margin: 0 0 10px;
-  padding-left: 18px;
-}
-
-.about li + li { margin-top: 4px; }
 
 /* ---------- Summary ---------- */
 

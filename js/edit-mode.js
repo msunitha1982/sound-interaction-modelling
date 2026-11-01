@@ -114,7 +114,7 @@
     var scene = el.closest('.scene');
     var title = scene ? scene.querySelector('.scene-title') : null;
     var place = title ? 'Scene "' + title.textContent + '"' :
-      el.closest('#nav') ? 'Tabs' : el.closest('#footer') ? 'Footer' : el.closest('#about') ? 'About the numbers box' : 'Page';
+      el.closest('#nav') ? 'Tabs' : el.closest('#footer') ? 'Footer' : 'Page';
     var part = el.closest('[role=tab]') ? 'tab label' :
       el.closest('.caption-bar') ? 'caption bar' :
       el.closest('.think-panel') ? 'Think panel' :
