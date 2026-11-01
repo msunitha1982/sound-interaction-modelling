@@ -159,6 +159,8 @@ Starting material table (teaching values, tune so qualitative ordering holds and
 Defaults: each material starts at its t_ref. Choosing a different material resets the thickness slider to that material's t_ref and range.
 
 Wave field for the 1D scenes (no solver, just superposed traveling waves). Pitch f, wavelength lambda = 34300 / f in cm. Incident wave amplitude A0 (set by volume).
+- Volume sets the pressure amplitude (the strain, how much the spacing between molecules changes): strain = 0.9 x volume / 100, kept below 1 so dots never cross. The displacement amplitude is A0 = strain x lambda / (2 pi), so at the same volume a low pitch moves molecules farther than a high pitch, as in real air.
+- The speaker's motion is kept as a short history, and the wave at distance x shows what the speaker did x / c earlier. Pitch, volume, and on/off changes travel down the tube instead of changing it all at once.
 - Before the wall: incident wave plus a reflected wave of amplitude A0 * sqrt(R) traveling the other way.
 - Inside a layer: amplitude falls off exponentially so that the energy leaving equals the energy that entered times T / (1 - R). The local rate of energy loss drives the heat glow brightness.
 - After the wall: a transmitted wave of amplitude A0 * sqrt(T).

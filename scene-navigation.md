@@ -34,6 +34,8 @@ Every scene screen has the same parts in the same places (see CLAUDE.md section 
 5. "Ideas you'll need" panel in the right column (2 to 3 short lines, collapsible, open by default).
 6. Controls and tools in the right column.
 
+Reveal triggers count only after the prediction is recorded, so the student always predicts before seeing the result.
+
 Checkmark rule for scenes 1 to 5: prediction recorded, reveal trigger reached, and the scene's key action done (stated per scene). If a student never records a prediction, the sim still works fully; they just do not get the mark and do not see the RESULT box until they do.
 
 ## 3. Scene 1: What is sound?
@@ -79,7 +81,9 @@ Correct: B.
 
 **Key action for the checkmark:** pitch changed at least once while sound is on.
 
-**Extras:** "Animation: 400x slower than real sound" in the sim corner (1,600x in Slow). Pressure graph: plots pressure against position under the tube, peaks lined up under the compressions. Probe: strip chart of pressure against time at its position.
+**Extras:** "Animation: 400x slower than real sound" in the sim corner (1,600x in Slow). Pressure graph: plots pressure against position under the tube, peaks lined up under the compressions; labels "Pressure", "higher", "normal", "lower", and "Position along the tube". Probe: strip chart of pressure against time at its position, titled "Pressure at probe" with the time axis labeled "last 3 s". Measuring tape: shows its reading as "{n} cm" above its case.
+
+**Label behavior:** the "Compression" and "Rarefaction" texts stay in place so they can be read while the wave moves; their leader lines follow the nearest compression and rarefaction. The "Wavelength" text also stays in place, and its bracket always spans two neighboring compressions on either side of it. The bracket is hidden when the wavelength is longer than 117 cm (pitch below about 290 Hz), because two compressions do not fit in the visible tube.
 
 ## 4. Scene 2: Reflection
 
