@@ -57,19 +57,19 @@ reference/         screenshots from the owner (PhET Sound Waves, Waves Intro); n
 
 Mirror PhET's conventions, not its assets. Do not copy PhET's logo, icons, sounds, code, or artwork. If `reference/` has screenshots, match their conventions.
 
-- Fixed-aspect stage of about 1024 x 618 stage units, scaled uniformly to fit the window, centered on a flat neutral page color. Design in stage units. Typical screens: 1366x768 and 1280x720.
-- Regions (approximate; adjust after looking at screenshots; shrink the sim area before shrinking text):
-  - Title strip, top left (about 700 x 52): scene title and, beneath it, the goal question.
-  - Sim area, left (about 700 x 340).
+- Fixed-aspect stage of 1280 x 618 stage units, scaled uniformly to fit the window, centered on a flat neutral page color. Design in stage units. Typical screens: 1366x768 and 1280x720. (Owner decision in Stage 1: the stage was widened from 1024 because the right column could not fit Scenes 4 and 5. On 16:9 screens in a browser window the height sets the scale, so the extra width costs nothing.)
+- Regions (adjust after looking at screenshots; shrink the sim area before shrinking text):
+  - Title strip, top left (700 x 48): scene title and, beneath it, the goal question.
+  - Sim area, left (700 x about 266).
   - Caption bar directly under the sim area (700 x 40): one or two plain sentences that update live.
-  - Think panel under the caption bar (700 x about 90): prediction, then result, then key idea. One slot whose content changes as the student progresses.
-  - Right column (about 300 wide): "Ideas you'll need" panel (collapsible, open by default), then control panels, then the tools tray (Scene 1 only).
+  - Think panel under the caption bar (700 x 146): prediction, then result, then key idea. One slot whose content changes as the student progresses. Its height is set by the longest RESULT (result text, match line, and key idea box).
+  - Right column (556 wide, two sub-columns of 275, each filled top to bottom): "Ideas you'll need" panel (collapsible, open by default) at the top of the first sub-column, then control panels, then the tools tray (Scene 1 only).
   - Fitting the right column: lay radio groups out in 2 or 3 columns and put short controls side by side where possible. If a column still does not fit, shrink the sim area and widen the right column. Never shrink text below the minimum and never scroll the right column.
   - Summary tab: the page uses the whole area above the footer, in two columns, and scrolls inside the stage if it does not fit. On that tab the footer shows only "About the numbers"; the speed toggle, Play/Pause, Step, and Reset All are hidden.
   - Footer strip (about 36 tall), above the nav bar: speed toggle (Normal / Slow) at left, Play/Pause and Step at center, Reset All at right.
   - Nav bar (about 48 tall) at the bottom: one tab per scene, left to right, with a small hand-drawn SVG preview in each tab.
 - Controls follow PhET habits: sliders show min and max at the ends and the current value with units; radio buttons for either/or; checkboxes for show/hide; titled panels with a thin border; draggable tools picked up from a tray.
-- Reset All returns the current scene to its clean defaults (controls, tool positions, prediction state). It does not clear checkmarks. No confirmation dialog.
+- Reset All returns the current scene to its clean defaults (controls, tool positions, prediction state). It does not clear checkmarks. No confirmation dialog. Reset All and entering a scene also set the speed to Normal and resume playing.
 - Play/Pause freezes simulation time and audio. Step advances animation time by 1/20 s while paused.
 - Speed toggle: Normal and Slow. Slow runs the animation 4 times slower than Normal. Normal is 400x slower than real sound (40x in Scene 2); Slow is 1,600x (160x in Scene 2). Scene 2 uses its own factor because at 400x a clap would take about a minute to cross the 30 m room.
 - Scene timers (reveal triggers such as "6 s", and the "last 4 s" caption windows) count real seconds while playing, not slowed animation time, so they take the same wall-clock time in Normal and Slow. They do not advance while paused or on Step. Probe charts and other plots of the wave use animation time.

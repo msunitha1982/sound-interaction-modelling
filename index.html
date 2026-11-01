@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sound: reflection, absorption, and transmission</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="stage" id="stage">
+  <div id="scenes"></div>
+
+  <div class="footer" id="footer">
+    <div class="footer-left sim-control" role="radiogroup" aria-label="Animation speed">
+      <label><input type="radio" name="speed" value="normal" checked>Normal</label>
+      <label><input type="radio" name="speed" value="slow">Slow</label>
+    </div>
+    <div class="footer-center sim-control">
+      <button type="button" class="btn" id="btn-play">Pause</button>
+      <button type="button" class="btn" id="btn-step" disabled>Step</button>
+    </div>
+    <div class="footer-right">
+      <button type="button" class="btn" id="btn-about" aria-expanded="false" aria-controls="about">About the numbers</button>
+      <button type="button" class="btn sim-control" id="btn-reset">Reset All</button>
+    </div>
+  </div>
+
+  <div class="nav" id="nav" role="tablist" aria-label="Scenes"></div>
+
+  <div class="about" id="about" role="dialog" aria-labelledby="about-title" tabindex="-1" hidden>
+    <h2 id="about-title">About the numbers</h2>
+    <ul id="about-list"></ul>
+    <button type="button" class="btn" id="btn-about-close">Close</button>
+  </div>
+</div>
+
+<script src="js/model.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/scenes/s1-what-is-sound.js"></script>
+<script src="js/scenes/s2-reflection.js"></script>
+<script src="js/scenes/s3-absorption.js"></script>
+<script src="js/scenes/s4-transmission.js"></script>
+<script src="js/scenes/s5-put-it-together.js"></script>
+<script src="js/scenes/s6-summary.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
