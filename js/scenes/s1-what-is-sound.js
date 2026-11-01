@@ -6,7 +6,7 @@
 
   var TIME_SCALE = 400;                       // Normal view is 400x slower than real sound
   var SPEED = model.SPEED_CM / TIME_SCALE;    // cm per animation second
-  var MAX_STRAIN = 0.9;                       // strain at 100% volume (exaggerated so it shows; below 1 so dots never cross)
+  var MAX_STRAIN = 0.95;                      // strain at 100% amplitude (exaggerated so it shows; below 1 so dots never cross)
   var TUBE_CM = 240;                          // visible tube length
   var TRACER_CM = 100;
   var ROWS = 7;
@@ -97,7 +97,9 @@
   }
 
   function syncEmitter() {
-    var strain = state.soundOn ? MAX_STRAIN * state.volume / 100 : 0;
+    // Square-root scale: strain still rises steadily with the slider, but
+    // mid settings show clear compressions without dots crossing at 100%.
+    var strain = state.soundOn ? MAX_STRAIN * Math.sqrt(state.volume / 100) : 0;
     emitter.set(state.pitch / TIME_SCALE, strain);
   }
 
@@ -210,15 +212,15 @@
       return 'The speaker is off. The molecules are evenly spaced. Turn the sound on.';
     }
     if (tapeOnTube()) {
-      return 'Measuring tape reads ' + tapeCm() + ' cm between two compressions. Wavelength = speed of sound / pitch = 34,300 cm/s / ' +
+      return 'Measuring tape reads ' + tapeCm() + ' cm between two compressions. Wavelength = speed of sound / frequency = 34,300 cm/s / ' +
         fmtHz(f) + ' Hz = ' + lam + ' cm.';
     }
     if (state.pitchAge < RECENT) {
-      return 'Pitch ' + fmtHz(f) + ' Hz: ' + fmtHz(f) + ' compressions pass any point each second. Wavelength is ' + lam +
-        ' cm. Higher pitch means shorter wavelength.';
+      return 'Frequency ' + fmtHz(f) + ' Hz: ' + fmtHz(f) + ' compressions pass any point each second. Wavelength is ' + lam +
+        ' cm. Higher frequency means shorter wavelength.';
     }
     if (state.volumeAge < RECENT) {
-      return 'Volume ' + state.volume + '%: the molecules move farther back and forth, so compressions are denser and rarefactions are thinner.';
+      return 'Amplitude ' + state.volume + '%: the molecules move farther back and forth, so compressions are denser and rarefactions are thinner.';
     }
     return 'The compressions travel to the right. The tracer molecule moves back and forth and stays near its starting position.';
   }
@@ -533,14 +535,16 @@
         ],
         correct: 'b',
         runText: 'Turn the sound on and watch the tracer molecule.',
-        keyIdea: 'Sound is a disturbance that travels through a material. The molecules only move back and forth around one place and pass the disturbance to their neighbors. Pitch is how many compressions pass each second. Volume is how far the molecules move.',
+        keyIdea: 'Sound is a disturbance that travels through a material. The molecules only move back and forth around one place and pass the disturbance to their neighbors. Frequency is how many compressions pass each second. We hear it as pitch. Amplitude is how far the molecules move. We hear it as loudness.',
         onChange: checkDone
       });
 
       c.ideas = ui.ideasPanel([
         'Air is made of molecules.',
         'Compression: a region where molecules are closer together than normal.',
-        'Rarefaction: a region where molecules are farther apart than normal.'
+        'Rarefaction: a region where molecules are farther apart than normal.',
+        'Frequency: how many compressions pass a point each second, measured in hertz (Hz). We hear frequency as pitch.',
+        'Amplitude: how far the molecules move from their resting place. A larger amplitude sounds louder.'
       ]);
 
       var sound = ui.panel('Sound');
@@ -555,7 +559,7 @@
         }
       });
       c.pitch = ui.slider({
-        label: 'Pitch', min: model.PITCH_MIN, max: model.PITCH_MAX, step: 10, value: state.pitch, unit: 'Hz',
+        label: 'Frequency', min: model.PITCH_MIN, max: model.PITCH_MAX, step: 10, value: state.pitch, unit: 'Hz',
         onInput: function (v) {
           state.pitch = v;
           state.pitchAge = 0;
@@ -568,7 +572,7 @@
         }
       });
       c.volume = ui.slider({
-        label: 'Volume', min: 0, max: 100, step: 1, value: state.volume, unit: '%',
+        label: 'Amplitude', min: 0, max: 100, step: 1, value: state.volume, unit: '%',
         onInput: function (v) {
           state.volume = v;
           state.volumeAge = 0;

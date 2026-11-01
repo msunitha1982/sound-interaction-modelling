@@ -94,7 +94,7 @@ SoundSim.wave1d = (function () {
     for (var c = 0; c < cols; c += 1) {
       colCm[c] = (c + 0.5) * spacing;
       for (r = 0; r < rows; r += 1) {
-        offX[c * rows + r] = rand() * spacing * pxPerCm * 0.2;
+        offX[c * rows + r] = rand() * spacing * pxPerCm * 0.1;
         offY[c * rows + r] = rand() * gap * 0.5;
       }
     }

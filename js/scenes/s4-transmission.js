@@ -52,7 +52,7 @@
       c.ideas = ui.ideasPanel([
         'Transmitted means the sound passes through the material and comes out the other side.',
         'A decibel (dB) is a unit of sound level. Every 10 dB lower is about half as loud to the ear.',
-        'Pitch is how high or low a sound is. It is measured in hertz (Hz).'
+        'Frequency is how many waves pass each second, in hertz (Hz). We hear it as pitch. Amplitude is the size of the wave. We hear it as loudness.'
       ]);
 
       var wall = ui.panel('Wall');
@@ -76,8 +76,8 @@
         value: state.source,
         onChange: function (v) { state.source = v; }
       });
-      c.pitch = ui.slider({ label: 'Pitch', min: 150, max: 2000, step: 10, value: state.pitch, unit: 'Hz', onInput: function (v) { state.pitch = v; } });
-      c.volume = ui.slider({ label: 'Volume', min: 0, max: 100, step: 1, value: state.volume, unit: '%', onInput: function (v) { state.volume = v; } });
+      c.pitch = ui.slider({ label: 'Frequency', min: 150, max: 2000, step: 10, value: state.pitch, unit: 'Hz', onInput: function (v) { state.pitch = v; } });
+      c.volume = ui.slider({ label: 'Amplitude', min: 0, max: 100, step: 1, value: state.volume, unit: '%', onInput: function (v) { state.volume = v; } });
       sound.body.appendChild(c.sound.el);
       sound.body.appendChild(c.source.el);
       sound.body.appendChild(c.pitch.el);

@@ -335,14 +335,15 @@ SoundSim.ui = (function () {
     runBox.appendChild(el('h2', { className: 'think-head', text: 'Prediction recorded.' }));
     runBox.appendChild(el('p', { className: 'think-q', text: opts.runText }));
 
-    var resultText = el('p', { className: 'think-q' });
+    // Titles sit at the start of their text so the longest result fits.
+    var resultText = el('span');
     var matchText = el('p', { className: 'think-q think-match' });
     resultBox.appendChild(el('div', { className: 'think-result-text' }, [
-      el('h2', { className: 'think-head', text: 'Result' }), resultText, matchText
+      el('p', { className: 'think-q' }, [el('strong', { className: 'think-label', text: 'Result: ' }), resultText]),
+      matchText
     ]));
     resultBox.appendChild(el('div', { className: 'key-idea' }, [
-      el('h2', { className: 'think-head', text: 'Key idea' }),
-      el('p', { className: 'think-q', text: opts.keyIdea })
+      el('p', { className: 'think-q' }, [el('strong', { className: 'think-label', text: 'Key idea: ' }), opts.keyIdea])
     ]));
 
     function render() {
@@ -436,7 +437,7 @@ SoundSim.ui = (function () {
     'Molecule motion is exaggerated so it can be seen. Real air molecules move far less in a sound wave.',
     'The heat glow is exaggerated. The warming caused by ordinary sound is far too small to feel.',
     'On the far side of a wall, the wave is drawn larger when Magnify far side is on, so it can be seen. The label shows how much larger, up to 200 times.',
-    'Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and pitch in more detail.',
+    'Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and frequency in more detail.',
     'Audio levels are compressed so very quiet sounds can still be heard.',
     'In the room scene, distances and echo delays are real. Only the animation is slowed.'
   ];

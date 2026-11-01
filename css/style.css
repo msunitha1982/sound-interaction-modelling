@@ -129,7 +129,7 @@ html, body {
 
 .think-panel {
   flex: none;
-  height: 146px;
+  height: 152px;
   padding: 6px 8px;
   border: 1px solid var(--panel-edge);
   border-radius: 2px;
@@ -514,9 +514,14 @@ input[type="range"]:disabled::-moz-range-thumb { border-color: var(--disabled); 
   gap: 8px;
 }
 
-.think-result-text { flex: 0 0 290px; }
+.think-result-text { flex: 0 0 275px; }
 
 .think-match { font-weight: bold; }
+
+.think-label {
+  font-family: var(--serif);
+  font-size: 14px;
+}
 
 .key-idea {
   flex: 1 1 auto;
