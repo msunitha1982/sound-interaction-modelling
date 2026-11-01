@@ -62,7 +62,8 @@
       c.ideas = ui.ideasPanel([
         'Every surface reflects some sound, absorbs some, and transmits some.',
         'The three shares always add up to 100% of the sound energy that arrives.',
-        'Material, thickness, and pitch change the shares.'
+        'Material, thickness, and frequency change the shares.',
+        'Frequency is how many waves pass each second, in hertz (Hz). We hear it as pitch. Amplitude is the size of the wave. We hear it as loudness.'
       ]);
 
       // The pickers write into state.layer1 / state.layer2, which Reset All
@@ -101,8 +102,8 @@
         value: state.source,
         onChange: function (v) { state.source = v; }
       });
-      c.pitch = ui.slider({ label: 'Pitch', min: 150, max: 2000, step: 10, value: state.pitch, unit: 'Hz', onInput: function (v) { state.pitch = v; } });
-      c.volume = ui.slider({ label: 'Volume', min: 0, max: 100, step: 1, value: state.volume, unit: '%', onInput: function (v) { state.volume = v; } });
+      c.pitch = ui.slider({ label: 'Frequency', min: 150, max: 2000, step: 10, value: state.pitch, unit: 'Hz', onInput: function (v) { state.pitch = v; } });
+      c.volume = ui.slider({ label: 'Amplitude', min: 0, max: 100, step: 1, value: state.volume, unit: '%', onInput: function (v) { state.volume = v; } });
       c.listen = ui.radioGroup({
         label: 'Listen on:',
         options: [{ value: 'near', label: 'Speaker side' }, { value: 'far', label: 'Far side' }],

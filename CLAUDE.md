@@ -6,7 +6,7 @@ This is an educational tool for 8th graders. It is a lesson, not a visual toy. A
 
 1. Sound is a disturbance that travels through a material. The molecules move back and forth around one place and pass the disturbance along. They do not travel with the wave.
 2. When sound meets a surface, its energy is split three ways: reflected, absorbed, transmitted. The three shares always add up to 100%.
-3. What changes the split: the material, its thickness, and the pitch of the sound.
+3. What changes the split: the material, its thickness, and the frequency of the sound.
 
 Context: a teacher assigns this for one day and provides their own short follow-up activity. Do not build worksheets, quizzes, scores, grading, logins, or teacher dashboards. The content supports NGSS MS-PS4-2 (develop and use a model to describe that waves are reflected, absorbed, or transmitted through various materials).
 
@@ -21,6 +21,10 @@ Priority order when things conflict: (1) correct science, (2) clarity, (3) runs 
 - kickoff-prompt.md: the staged build plan (Stage 0 to Stage 7) and the checks and report required after each stage.
 
 If they conflict, CLAUDE.md wins on technical and UI rules, scene-navigation.md wins on scene content. If something is unclear, ask. Do not guess. Every decision the owner makes is written back into these docs so they stay the source of truth.
+
+Temporary owner tool: `js/edit-mode.js`. Opening the site with `?edit` in the URL (for example `.../index.html?edit#1`) lets the owner click any text, type a replacement, and copy a list of changes to paste into the chat. Those changes are then made in the code and written into these docs. It does nothing without `?edit`. Remove it (file and script tag) in Stage 7.
+
+Workflow (owner decision): after finishing each big piece of work (a stage, or stages run back to back), commit, push, and open a pull request into `main` so the owner can merge it and test on GitHub Pages.
 
 ## 3. Tech constraints
 
@@ -60,9 +64,9 @@ Mirror PhET's conventions, not its assets. Do not copy PhET's logo, icons, sound
 - Fixed-aspect stage of 1280 x 618 stage units, scaled uniformly to fit the window, centered on a flat neutral page color. Design in stage units. Typical screens: 1366x768 and 1280x720. (Owner decision in Stage 1: the stage was widened from 1024 because the right column could not fit Scenes 4 and 5. On 16:9 screens in a browser window the height sets the scale, so the extra width costs nothing.)
 - Regions (adjust after looking at screenshots; shrink the sim area before shrinking text):
   - Title strip, top left (700 x 48): scene title and, beneath it, the goal question.
-  - Sim area, left (700 x about 266).
+  - Sim area, left (700 x about 260).
   - Caption bar directly under the sim area (700 x 40): one or two plain sentences that update live.
-  - Think panel under the caption bar (700 x 146): prediction, then result, then key idea. One slot whose content changes as the student progresses. Its height is set by the longest RESULT (result text, match line, and key idea box).
+  - Think panel under the caption bar (700 x 152): prediction, then result, then key idea. One slot whose content changes as the student progresses. Its height is set by the longest RESULT (Scene 3: result text and match line on the left, key idea box on the right). The titles "Result:" and "Key idea:" start their text instead of taking their own line.
   - Right column (556 wide, two sub-columns of 275, each filled top to bottom): "Ideas you'll need" panel (collapsible, open by default) at the top of the first sub-column, then control panels, then the tools tray (Scene 1 only).
   - Fitting the right column: lay radio groups out in 2 or 3 columns and put short controls side by side where possible. If a column still does not fit, shrink the sim area and widen the right column. Never shrink text below the minimum and never scroll the right column.
   - Summary tab: the page uses the whole area above the footer, in two columns, and scrolls inside the stage if it does not fit. On that tab the footer shows only "About the numbers"; the speed toggle, Play/Pause, Step, and Reset All are hidden.
@@ -117,13 +121,14 @@ Plain teacher voice. Short declarative sentences. Present tense. Units on every 
 - No exclamation points. No em dashes. No emoji. No "Let's", "dive in", "explore", "unlock", "discover", "journey", "magic", "awesome", "Great job".
 - Feedback is neutral and informative: "Prediction recorded." "Your prediction matches the result." "Your prediction does not match the result. The tracer molecule returned to its starting position." Never praise, never scold.
 - Define each term once, where it first appears, then use it consistently.
+- Use scientific terms (owner decision): "frequency", not pitch, and "amplitude", not volume, on controls and in text. Ideas panels link them once to everyday words (we hear frequency as pitch and amplitude as loudness).
 - Sentence case for labels and buttons ("Reset All" is the one exception, matching PhET).
 
 ## 7. The model
 
 All three outcomes come from one function in model.js. Everything on screen and everything heard is computed from it. Sliders must change the result live.
 
-Inputs: layer list (1 or 2 layers; each has material and thickness in cm), pitch f in Hz (150 to 2000).
+Inputs: layer list (1 or 2 layers; each has material and thickness in cm), frequency f in Hz (150 to 2000).
 
 Per layer, with thickness t and reference thickness t_ref:
 
@@ -156,7 +161,9 @@ Starting material table (teaching values, tune so qualitative ordering holds and
 
 Defaults: each material starts at its t_ref. Choosing a different material resets the thickness slider to that material's t_ref and range.
 
-Wave field for the 1D scenes (no solver, just superposed traveling waves). Pitch f, wavelength lambda = 34300 / f in cm. Incident wave amplitude A0 (set by volume).
+Wave field for the 1D scenes (no solver, just superposed traveling waves). Frequency f, wavelength lambda = 34300 / f in cm. Incident wave amplitude A0 (set by the Amplitude slider).
+- The Amplitude slider sets the pressure amplitude (the strain, how much the spacing between molecules changes): strain = 0.95 x sqrt(amplitude / 100). The square root keeps the strain rising steadily with the slider while making compressions clearly visible at the default 50% (owner asked for more exaggeration), and the strain stays below 1 so dots never cross. The displacement amplitude is A0 = strain x lambda / (2 pi), so at the same slider setting a low frequency moves molecules farther than a high frequency, as in real air.
+- The speaker's motion is kept as a short history, and the wave at distance x shows what the speaker did x / c earlier. Frequency, amplitude, and on/off changes travel down the tube instead of changing it all at once.
 - Before the wall: incident wave plus a reflected wave of amplitude A0 * sqrt(R) traveling the other way.
 - Inside a layer: amplitude falls off exponentially so that the energy leaving equals the energy that entered times T / (1 - R). The local rate of energy loss drives the heat glow brightness.
 - After the wall: a transmitted wave of amplitude A0 * sqrt(T).
@@ -172,7 +179,7 @@ Write `node js/model.js`-runnable self-checks: R + A + T = 1 within 1e-9, no NaN
 Web Audio API only. No audio files. Audio is started by the first button click (browser rule); every scene has a visible Sound On/Off control.
 
 - Source types: Tone (sine at the pitch), Buzz (sawtooth at the pitch, rich in harmonics so muffling is audible), Clap (60 ms noise burst, band-limited).
-- Keep pitch in 150 to 2000 Hz so it is audible on small speakers. Show a note recommending headphones in Scene 1.
+- Keep the frequency in 150 to 2000 Hz so it is audible on small speakers. Show a note recommending headphones in Scene 1.
 - Master gain is capped at a comfortable level. Ramp gain over 20 ms on every change and on start and stop to avoid clicks. Stop all audio immediately when leaving a scene or when the tab is hidden.
 - Reflection: direct clap with amplitude scaled by 1 / direct path, then the echo at the real delay with amplitude scaled by sqrt(R) / reflected path.
 - Absorption: the echo amplitude is sqrt(R) times the direct amplitude, so soft materials give a clearly quieter echo.
@@ -187,7 +194,7 @@ A button labeled "About the numbers" (in the footer on every tab, including Summ
 - "Molecule motion is exaggerated so it can be seen. Real air molecules move far less in a sound wave."
 - "The heat glow is exaggerated. The warming caused by ordinary sound is far too small to feel."
 - "On the far side of a wall, the wave is drawn larger when Magnify far side is on, so it can be seen. The label shows how much larger, up to 200 times."
-- "Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and pitch in more detail."
+- "Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and frequency in more detail."
 - "Audio levels are compressed so very quiet sounds can still be heard."
 - "In the room scene, distances and echo delays are real. Only the animation is slowed."
 

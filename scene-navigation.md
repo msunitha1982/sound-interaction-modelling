@@ -6,7 +6,8 @@ Conventions used throughout this file:
 - {TL} always means the effective transmission loss TL_eff from CLAUDE.md section 7, so dB and % always agree.
 - Percentages and dB values are shown to one decimal place.
 - Time windows ("at least 6 s", "within the last 4 s") are real seconds while playing (CLAUDE.md section 4). They take the same wall-clock time in Normal and Slow.
-- Every "Volume" slider is 0 to 100%, default 50%, step 1.
+- Every "Amplitude" slider is 0 to 100%, default 50%, step 1.
+- Scientific terms (owner decision): controls and text say "frequency" (not pitch) and "amplitude" (not volume). Ideas panels link them once to everyday words: we hear frequency as pitch and amplitude as loudness.
 - Every "Thickness" slider uses the chosen material's range and step from CLAUDE.md section 7, and resets to that material's t_ref when the material changes.
 
 ## 1. Navigation rules
@@ -30,9 +31,11 @@ Every scene screen has the same parts in the same places (see CLAUDE.md section 
 4. Think panel with three stages:
    - PREDICT: "Predict" heading, the question, 2 to 4 options as radio buttons (or small diagrams), and a button "Record prediction". The sim is usable while this shows.
    - RUN: after recording, the panel shows "Prediction recorded." and one instruction for the student (for example "Turn the sound on and watch the tracer molecule.").
-   - RESULT: appears automatically when the scene's reveal trigger happens. Shows the result text, then "Your prediction matches the result." or "Your prediction does not match the result.", then the key idea in a bordered box titled "Key idea".
+   - RESULT: appears automatically when the scene's reveal trigger happens. Shows the result text, then "Your prediction matches the result." or "Your prediction does not match the result.", then the key idea in a bordered box titled "Key idea". The titles "Result:" and "Key idea:" begin their text (see CLAUDE.md section 4).
 5. "Ideas you'll need" panel in the right column (2 to 3 short lines, collapsible, open by default).
 6. Controls and tools in the right column.
+
+Reveal triggers count only after the prediction is recorded, so the student always predicts before seeing the result.
 
 Checkmark rule for scenes 1 to 5: prediction recorded, reveal trigger reached, and the scene's key action done (stated per scene). If a student never records a prediction, the sim still works fully; they just do not get the mark and do not see the RESULT box until they do.
 
@@ -46,11 +49,13 @@ Tab preview: a speaker and a row of dots.
 - "Air is made of molecules."
 - "Compression: a region where molecules are closer together than normal."
 - "Rarefaction: a region where molecules are farther apart than normal."
+- "Frequency: how many compressions pass a point each second, measured in hertz (Hz). We hear frequency as pitch."
+- "Amplitude: how far the molecules move from their resting place. A larger amplitude sounds louder."
 
 **View:** a horizontal tube of air (side view), speaker cone at the left end. The tube runs off the right edge of the sim area with no end wall drawn, so nothing implies reflection, and no reflection is simulated. About 220 columns by 7 rows of dots (1D motion: all dots in a column share one displacement). The visible tube represents 240 cm. Labels with leader lines: "Speaker", "Compression", "Rarefaction", "Wavelength" (bracket between two compressions, shown when the measuring tape is not in use), "Tracer molecule". The tracer is one highlighted molecule (tracer color, outlined) 100 cm from the speaker, with a thin dotted vertical line marking its starting position.
 
 **Controls (right column):**
-- Panel "Sound": button "Sound: Off / On", slider "Pitch" 150 to 2000 Hz (default 500, step 10), slider "Volume" 0 to 100% (default 50).
+- Panel "Sound": button "Sound: Off / On", slider "Frequency" 150 to 2000 Hz (default 500, step 10), slider "Amplitude" 0 to 100% (default 50).
 - Panel "Show": checkboxes "Tracer molecule" (on), "Compression and rarefaction labels" (on), "Pressure graph" (off).
 - Tools tray: Measuring tape, Probe.
 - Note under the Sound panel: "Headphones work best."
@@ -59,9 +64,9 @@ Tab preview: a speaker and a row of dots.
 
 **Caption bar (first match wins):**
 1. Sound off: "The speaker is off. The molecules are evenly spaced. Turn the sound on."
-2. Sound on, measuring tape on the tube: "Measuring tape reads {measured} cm between two compressions. Wavelength = speed of sound / pitch = 34,300 cm/s / {f} Hz = {lambda} cm."
-3. Pitch changed within the last 4 s: "Pitch {f} Hz: {f} compressions pass any point each second. Wavelength is {lambda} cm. Higher pitch means shorter wavelength."
-4. Volume changed within the last 4 s: "Volume {v}%: the molecules move farther back and forth, so compressions are denser and rarefactions are thinner."
+2. Sound on, measuring tape on the tube: "Measuring tape reads {measured} cm between two compressions. Wavelength = speed of sound / frequency = 34,300 cm/s / {f} Hz = {lambda} cm."
+3. Frequency changed within the last 4 s: "Frequency {f} Hz: {f} compressions pass any point each second. Wavelength is {lambda} cm. Higher frequency means shorter wavelength."
+4. Amplitude changed within the last 4 s: "Amplitude {v}%: the molecules move farther back and forth, so compressions are denser and rarefactions are thinner."
 5. Otherwise, sound on: "The compressions travel to the right. The tracer molecule moves back and forth and stays near its starting position."
 
 **Predict:** "The tracer molecule is 100 cm from the speaker. When sound passes it, what will the tracer molecule do?"
@@ -75,11 +80,13 @@ Correct: B.
 
 **Result text:** "The tracer molecule returned to its starting position on every cycle. The compressions kept moving to the right, but the air did not flow down the tube."
 
-**Key idea:** "Sound is a disturbance that travels through a material. The molecules only move back and forth around one place and pass the disturbance to their neighbors. Pitch is how many compressions pass each second. Volume is how far the molecules move."
+**Key idea:** "Sound is a disturbance that travels through a material. The molecules only move back and forth around one place and pass the disturbance to their neighbors. Frequency is how many compressions pass each second. We hear it as pitch. Amplitude is how far the molecules move. We hear it as loudness."
 
-**Key action for the checkmark:** pitch changed at least once while sound is on.
+**Key action for the checkmark:** frequency changed at least once while sound is on.
 
-**Extras:** "Animation: 400x slower than real sound" in the sim corner (1,600x in Slow). Pressure graph: plots pressure against position under the tube, peaks lined up under the compressions. Probe: strip chart of pressure against time at its position.
+**Extras:** "Animation: 400x slower than real sound" in the sim corner (1,600x in Slow). Pressure graph: plots pressure against position under the tube, peaks lined up under the compressions; labels "Pressure", "higher", "normal", "lower", and "Position along the tube". Probe: strip chart of pressure against time at its position, titled "Pressure at probe" with the time axis labeled "last 3 s". Measuring tape: shows its reading as "{n} cm" above its case.
+
+**Label behavior:** the "Compression" and "Rarefaction" texts stay in place so they can be read while the wave moves; their leader lines follow the nearest compression and rarefaction. The "Wavelength" text also stays in place, and its bracket always spans two neighboring compressions on either side of it. The bracket is hidden when the wavelength is longer than 117 cm (frequency below about 290 Hz), because two compressions do not fit in the visible tube.
 
 ## 4. Scene 2: Reflection
 
@@ -137,12 +144,13 @@ Tab preview: a wave fading into a hatched block.
 - "Energy is not created or destroyed. It changes form."
 - "Absorbed means the energy goes into the material."
 - "Thermal energy is the energy of molecules jiggling. More thermal energy means warmer."
+- "Frequency is how many waves pass each second, in hertz (Hz). We hear it as pitch. Amplitude is the size of the wave. We hear it as loudness."
 
 **View:** the 1D molecule tube from scene 1 with a material block (hatched pattern for the absorbed color is used in the legend, the block itself drawn with denser dots) at about 60% along the tube, speaker on the left. Visible labels: "Incoming sound", "Reflected sound" (reflected color), "Material", "Heat glow". Inside the material the molecules jitter with an amplitude that falls off with depth, and a glow (absorbed color, low opacity) is strongest where the wave loses the most energy. Below the tube: the energy bar.
 
 **Controls:**
 - Panel "Material": radio buttons Concrete, Wood, Curtain, Foam (default Wood). Slider "Thickness" in cm with the range of the chosen material.
-- Panel "Sound": button "Sound: Off / On" (continuous tone), button "Play clap" (clap and its echo), slider "Pitch" 150 to 2000 Hz (default 500), slider "Volume".
+- Panel "Sound": button "Sound: Off / On" (continuous tone), button "Play clap" (clap and its echo), slider "Frequency" 150 to 2000 Hz (default 500), slider "Amplitude".
 - Panel "Show": checkboxes "Heat glow" (on), "Energy bar" (on).
 
 **Caption bar:**
@@ -175,33 +183,33 @@ Tab preview: a wave passing through a thick block.
 **Ideas you'll need:**
 - "Transmitted means the sound passes through the material and comes out the other side."
 - "A decibel (dB) is a unit of sound level. Every 10 dB lower is about half as loud to the ear."
-- "Pitch is how high or low a sound is. It is measured in hertz (Hz)."
+- "Frequency is how many waves pass each second, in hertz (Hz). We hear it as pitch. Amplitude is the size of the wave. We hear it as loudness."
 
 **View:** the 1D tube with a wall at the middle. Labels: "Speaker side", "Wall", "Far side", "Wall molecules pass the vibration along" (leader to the wall region). Inside the wall the molecules are drawn denser and visibly jitter. Two vertical level meters, one on each side of the wall, in dB relative to the sound arriving at the wall (near side reads 0 dB; far side reads -{TL} dB). A small head icon on whichever side is selected under "Listen".
 
 **Controls:**
 - Panel "Wall": radio buttons Concrete, Glass, Wood, Foam, Curtain (default Concrete). Slider "Thickness" with the material's range.
-- Panel "Sound": button "Sound: Off / On", radio "Source: Tone / Buzz" (default Buzz), slider "Pitch" 150 to 2000 Hz (default 500), slider "Volume".
+- Panel "Sound": button "Sound: Off / On", radio "Source: Tone / Buzz" (default Buzz), slider "Frequency" 150 to 2000 Hz (default 500), slider "Amplitude".
 - Panel "Listen": radio "Listen on: Speaker side / Far side" (default Far side).
 - Panel "Show": checkbox "Magnify far side" (on), with the live magnifier label from CLAUDE.md section 10 ("Far side drawn {N}x larger.", capped at 200x).
 
 **Caption bar:**
 1. Before any sound: "Turn the sound on. Switch between the speaker side and the far side."
 2. Otherwise: "On the far side the sound is {TL} dB quieter than at the wall. {T}% of the sound energy gets through."
-3. Add when pitch changed within the last 4 s: "At {f} Hz this wall reduces the sound by {TL} dB."
+3. Add when frequency changed within the last 4 s: "At {f} Hz this wall reduces the sound by {TL} dB."
 
-**Predict:** "A student keeps the same wall and changes the pitch from 200 Hz to 2000 Hz. What happens to the sound on the far side?"
+**Predict:** "A student keeps the same wall and changes the frequency from 200 Hz to 2000 Hz. What happens to the sound on the far side?"
 - A: "It gets louder."
 - B: "It stays about the same."
 - C: "It gets quieter."
 
 Correct: C.
 
-**Reveal trigger:** pitch has been moved across at least 1,000 Hz while the sound is on.
+**Reveal trigger:** frequency has been moved across at least 1,000 Hz while the sound is on.
 
-**Result text:** "At {f1} Hz the far side was {x1} dB below the wall. At {f2} Hz it was {x2} dB below. Higher pitches were blocked more." Here f1 is the lowest and f2 the highest pitch reached while the sound was on, and x1, x2 are the TL_eff values at those pitches.
+**Result text:** "At {f1} Hz the far side was {x1} dB below the wall. At {f2} Hz it was {x2} dB below. Higher frequencies were blocked more." Here f1 is the lowest and f2 the highest frequency reached while the sound was on, and x1, x2 are the TL_eff values at those frequencies.
 
-**Key idea:** "Sound passes through a wall because the wall's own molecules vibrate and pass the disturbance along. Part of the sound is reflected and part is absorbed on the way, so less energy comes out the other side. Thicker and denser walls let less through. Low pitches pass through more easily than high pitches."
+**Key idea:** "Sound passes through a wall because the wall's own molecules vibrate and pass the disturbance along. Part of the sound is reflected and part is absorbed on the way, so less energy comes out the other side. Thicker and denser walls let less through. Low frequencies pass through more easily than high frequencies."
 
 **Key action for the checkmark:** listened on both sides at least once.
 
@@ -216,24 +224,25 @@ Tab preview: a wall with three arrows leaving it.
 **Ideas you'll need:**
 - "Every surface reflects some sound, absorbs some, and transmits some."
 - "The three shares always add up to 100% of the sound energy that arrives."
-- "Material, thickness, and pitch change the shares."
+- "Material, thickness, and frequency change the shares."
+- "Frequency is how many waves pass each second, in hertz (Hz). We hear it as pitch. Amplitude is the size of the wave. We hear it as loudness."
 
 **View:** the 1D tube with a wall (one or two layers), the labeled incoming, reflected, and transmitted waves, the energy bar below the tube (large, the main readout), and a far-side level meter.
 
 **Controls:**
 - Panel "Wall, layer 1 (faces the speaker)": material radio (Concrete, Glass, Wood, Foam, Curtain), thickness slider.
 - Panel "Wall, layer 2": checkbox "Add second layer", then material radio and thickness slider (disabled when unchecked). Layer 2 sits behind layer 1.
-- Panel "Sound": "Sound: Off / On", "Source: Tone / Buzz", pitch slider, volume slider, "Listen on: Speaker side / Far side".
+- Panel "Sound": "Sound: Off / On", "Source: Tone / Buzz", "Frequency" slider, "Amplitude" slider, "Listen on: Speaker side / Far side".
 - Panel "Mode": radio "Free play / Challenge 1 / Challenge 2 / Challenge 3". The challenge checklist appears inside this panel, under the radios.
 - Panel "Show": checkbox "Magnify far side" (on), with the live magnifier label from CLAUDE.md section 10, same as Scene 4.
 
 **Challenges (each shows a checklist of conditions marked "met" or "not met", plain text, updated live, inside the Mode panel; when every condition is met the panel shows "Goal met."):**
 
-1. "Quiet room." One layer only. Pitch fixed at 300 Hz. Conditions: "Far side at least 40 dB quieter", "Wall no thicker than 10 cm". (Intended solution: concrete at 10 cm.)
-2. "Dead room." One layer only. Pitch fixed at 500 Hz. Conditions: "Reflected share 20% or less". (Intended solution: foam.)
-3. "Recording booth." Two layers allowed. Pitch fixed at 500 Hz. Conditions: "Reflected share 30% or less", "Far side at least 30 dB quieter", "Total thickness 20 cm or less". (Intended solution: foam or curtain facing the speaker, plus a dense layer behind it. R comes from layer 1 only; TL adds across layers.)
+1. "Quiet room." One layer only. Frequency fixed at 300 Hz. Conditions: "Far side at least 40 dB quieter", "Wall no thicker than 10 cm". (Intended solution: concrete at 10 cm.)
+2. "Dead room." One layer only. Frequency fixed at 500 Hz. Conditions: "Reflected share 20% or less". (Intended solution: foam.)
+3. "Recording booth." Two layers allowed. Frequency fixed at 500 Hz. Conditions: "Reflected share 30% or less", "Far side at least 30 dB quieter", "Total thickness 20 cm or less". (Intended solution: foam or curtain facing the speaker, plus a dense layer behind it. R comes from layer 1 only; TL adds across layers.)
 
-In a challenge, the fixed pitch slider is disabled and shows the fixed value. In challenges 1 and 2, "Add second layer" is unchecked and disabled. Conditions are evaluated on the displayed (rounded) numbers. Switching back to Free play enables the pitch slider and the second layer again and leaves the other controls as they are.
+In a challenge, the fixed frequency slider is disabled and shows the fixed value. In challenges 1 and 2, "Add second layer" is unchecked and disabled. Conditions are evaluated on the displayed (rounded) numbers. Switching back to Free play enables the frequency slider and the second layer again and leaves the other controls as they are.
 
 **Caption bar:**
 1. Free play: "{layer description}: {R}% reflected, {A}% absorbed, {T}% transmitted. Total 100%."
@@ -250,7 +259,7 @@ Correct: A.
 
 **Result text:** "For {t} cm of concrete at {f} Hz: {R}% reflected, {A}% absorbed, {T}% transmitted. The reflected share is the largest."
 
-**Key idea:** "Every surface does all three: it reflects some sound, absorbs some, and transmits some. The three always add up to 100% of the sound energy. Different materials split the energy differently, and the split also depends on thickness and pitch."
+**Key idea:** "Every surface does all three: it reflects some sound, absorbs some, and transmits some. The three always add up to 100% of the sound energy. Different materials split the energy differently, and the split also depends on thickness and frequency."
 
 **Key action for the checkmark:** none beyond prediction and reveal. Challenge results are recorded separately for the Summary.
 

@@ -51,7 +51,8 @@
       c.ideas = ui.ideasPanel([
         'Energy is not created or destroyed. It changes form.',
         'Absorbed means the energy goes into the material.',
-        'Thermal energy is the energy of molecules jiggling. More thermal energy means warmer.'
+        'Thermal energy is the energy of molecules jiggling. More thermal energy means warmer.',
+        'Frequency is how many waves pass each second, in hertz (Hz). We hear it as pitch. Amplitude is the size of the wave. We hear it as loudness.'
       ]);
 
       var mat = ui.panel('Material');
@@ -70,8 +71,8 @@
       var sound = ui.panel('Sound');
       c.sound = ui.toggleButton({ offLabel: 'Sound: Off', onLabel: 'Sound: On', onChange: function (on) { state.soundOn = on; } });
       c.clap = ui.button('Play clap', function () {});
-      c.pitch = ui.slider({ label: 'Pitch', min: 150, max: 2000, step: 10, value: state.pitch, unit: 'Hz', onInput: function (v) { state.pitch = v; } });
-      c.volume = ui.slider({ label: 'Volume', min: 0, max: 100, step: 1, value: state.volume, unit: '%', onInput: function (v) { state.volume = v; } });
+      c.pitch = ui.slider({ label: 'Frequency', min: 150, max: 2000, step: 10, value: state.pitch, unit: 'Hz', onInput: function (v) { state.pitch = v; } });
+      c.volume = ui.slider({ label: 'Amplitude', min: 0, max: 100, step: 1, value: state.volume, unit: '%', onInput: function (v) { state.volume = v; } });
       sound.body.appendChild(ui.el('div', { className: 'row' }, [c.sound.el, c.clap]));
       sound.body.appendChild(c.pitch.el);
       sound.body.appendChild(c.volume.el);

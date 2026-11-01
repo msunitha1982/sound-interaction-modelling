@@ -256,6 +256,180 @@ SoundSim.ui = (function () {
     };
   }
 
+  // Two stacked canvases filling a sim area: a static background (bg),
+  // redrawn only when needsBg is set, and the per-frame foreground (fg).
+  // Drawing uses stage units; the backing store follows the stage scale,
+  // with devicePixelRatio capped at 1.5.
+  function simCanvas(container) {
+    var bg = el('canvas', { className: 'sim-canvas', 'aria-hidden': 'true' });
+    var fg = el('canvas', { className: 'sim-canvas' });
+    container.appendChild(bg);
+    container.appendChild(fg);
+    var api = {
+      bg: bg,
+      fg: fg,
+      ctxBg: bg.getContext('2d'),
+      ctx: fg.getContext('2d'),
+      w: 0,
+      h: 0,
+      needsBg: true,
+      resize: function () {
+        var w = container.clientWidth;
+        var h = container.clientHeight;
+        if (!w || !h) { return; } // hidden scene; resized again on enter
+        var k = (SoundSim.stageScale || 1) * Math.min(window.devicePixelRatio || 1, 1.5);
+        [bg, fg].forEach(function (c) {
+          c.width = Math.round(w * k);
+          c.height = Math.round(h * k);
+        });
+        api.ctxBg.setTransform(k, 0, 0, k, 0, 0);
+        api.ctx.setTransform(k, 0, 0, k, 0, 0);
+        api.w = w;
+        api.h = h;
+        api.needsBg = true;
+      },
+      // Pointer position in stage units relative to the sim area.
+      toSim: function (clientX, clientY) {
+        var r = fg.getBoundingClientRect();
+        var s = r.width / api.w;
+        return { x: (clientX - r.left) / s, y: (clientY - r.top) / s };
+      },
+      contains: function (clientX, clientY) {
+        var r = fg.getBoundingClientRect();
+        return clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+      }
+    };
+    window.addEventListener('soundsim:resize', api.resize);
+    return api;
+  }
+
+  // Think panel: PREDICT, then RUN, then RESULT (CLAUDE.md section 10).
+  // It never blocks the sim. opts: question, options [{value, label}],
+  // correct, runText, keyIdea, onChange() (called after record and reveal).
+  function thinkPanel(container, opts) {
+    var stage = 'predict';
+    var choice = null;
+    var predictBox = el('div', { className: 'think-predict' });
+    var runBox = el('div', { className: 'think-run' });
+    var resultBox = el('div', { className: 'think-result' });
+    container.appendChild(predictBox);
+    container.appendChild(runBox);
+    container.appendChild(resultBox);
+
+    var recordBtn = button('Record prediction', function () {
+      stage = 'run';
+      render();
+      opts.onChange();
+    });
+    var radios = radioGroup({
+      ariaLabel: 'Prediction',
+      columns: 1,
+      options: opts.options,
+      value: null,
+      onChange: function (v) { choice = v; recordBtn.disabled = false; }
+    });
+    predictBox.appendChild(el('h2', { className: 'think-head', text: 'Predict' }));
+    predictBox.appendChild(el('p', { className: 'think-q', text: opts.question }));
+    predictBox.appendChild(el('div', { className: 'think-row' }, [radios.el, recordBtn]));
+
+    runBox.appendChild(el('h2', { className: 'think-head', text: 'Prediction recorded.' }));
+    runBox.appendChild(el('p', { className: 'think-q', text: opts.runText }));
+
+    // Titles sit at the start of their text so the longest result fits.
+    var resultText = el('span');
+    var matchText = el('p', { className: 'think-q think-match' });
+    resultBox.appendChild(el('div', { className: 'think-result-text' }, [
+      el('p', { className: 'think-q' }, [el('strong', { className: 'think-label', text: 'Result: ' }), resultText]),
+      matchText
+    ]));
+    resultBox.appendChild(el('div', { className: 'key-idea' }, [
+      el('p', { className: 'think-q' }, [el('strong', { className: 'think-label', text: 'Key idea: ' }), opts.keyIdea])
+    ]));
+
+    function render() {
+      predictBox.hidden = stage !== 'predict';
+      runBox.hidden = stage !== 'run';
+      resultBox.hidden = stage !== 'result';
+    }
+
+    var api = {
+      recorded: function () { return stage !== 'predict'; },
+      revealed: function () { return stage === 'result'; },
+      // Called by the scene when its reveal trigger happens.
+      reveal: function (text) {
+        if (stage !== 'run') { return; }
+        stage = 'result';
+        resultText.textContent = text;
+        matchText.textContent = choice === opts.correct ?
+          'Your prediction matches the result.' : 'Your prediction does not match the result.';
+        render();
+        opts.onChange();
+      },
+      reset: function () {
+        stage = 'predict';
+        choice = null;
+        radios.set(null);
+        recordBtn.disabled = true;
+        render();
+      }
+    };
+    api.reset();
+    return api;
+  }
+
+  // Tools tray. Each tool: {label, icon (SVG markup), isOut(), placeDefault(),
+  // placeAt(x, y), putAway()}. Drag a tray button into the sim to place the
+  // tool there; release outside the sim to put it back. A click (or Enter)
+  // places the tool at its default spot, or puts it back if it is out.
+  function toolTray(canvas, tools) {
+    var buttons = [];
+    var tray = el('div', { className: 'tray' });
+
+    function sync() {
+      tools.forEach(function (tool, i) {
+        buttons[i].setAttribute('aria-pressed', tool.isOut() ? 'true' : 'false');
+      });
+    }
+    function toggle(tool) {
+      if (tool.isOut()) { tool.putAway(); } else { tool.placeDefault(); }
+      sync();
+    }
+
+    tools.forEach(function (tool) {
+      var b = el('button', { type: 'button', className: 'btn tool', 'aria-pressed': 'false' });
+      b.innerHTML = tool.icon + '<span>' + tool.label + '</span>';
+      var drag = null;
+      b.addEventListener('pointerdown', function (e) {
+        if (e.button !== 0) { return; }
+        b.setPointerCapture(e.pointerId);
+        drag = { x: e.clientX, y: e.clientY, started: false };
+      });
+      b.addEventListener('pointermove', function (e) {
+        if (!drag) { return; }
+        if (!drag.started && Math.abs(e.clientX - drag.x) + Math.abs(e.clientY - drag.y) > 4) {
+          drag.started = true;
+        }
+        if (drag.started) {
+          var p = canvas.toSim(e.clientX, e.clientY);
+          tool.placeAt(p.x, p.y);
+          sync();
+        }
+      });
+      b.addEventListener('pointerup', function (e) {
+        if (!drag) { return; }
+        if (!drag.started) { toggle(tool); }
+        else if (!canvas.contains(e.clientX, e.clientY)) { tool.putAway(); sync(); }
+        drag = null;
+      });
+      b.addEventListener('pointercancel', function () { drag = null; });
+      // Keyboard activation (pointer clicks are handled on pointerup).
+      b.addEventListener('click', function (e) { if (e.detail === 0) { toggle(tool); } });
+      buttons.push(b);
+      tray.appendChild(b);
+    });
+    return { el: tray, sync: sync };
+  }
+
   // Text of the "About the numbers" box (CLAUDE.md section 9). The Summary
   // tab prints the same lines.
   var aboutLines = [
@@ -263,7 +437,7 @@ SoundSim.ui = (function () {
     'Molecule motion is exaggerated so it can be seen. Real air molecules move far less in a sound wave.',
     'The heat glow is exaggerated. The warming caused by ordinary sound is far too small to feel.',
     'On the far side of a wall, the wave is drawn larger when Magnify far side is on, so it can be seen. The label shows how much larger, up to 200 times.',
-    'Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and pitch in more detail.',
+    'Material values are simplified teaching values, not measurements. Real walls depend on more things, such as how they are built, gaps, and frequency in more detail.',
     'Audio levels are compressed so very quiet sounds can still be heard.',
     'In the room scene, distances and echo delays are real. Only the animation is slowed.'
   ];
@@ -280,6 +454,9 @@ SoundSim.ui = (function () {
     radioGroup: radioGroup,
     checkbox: checkbox,
     materialPicker: materialPicker,
+    simCanvas: simCanvas,
+    thinkPanel: thinkPanel,
+    toolTray: toolTray,
     aboutLines: aboutLines
   };
 })();
