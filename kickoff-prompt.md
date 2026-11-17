@@ -1,5 +1,21 @@
 # Kickoff prompt for Claude Code
 
+## Current implementation
+
+Stages 1–3 are implemented. Stage 4 adds the shared single-layer wall view,
+Transmission (Scene 4), and Absorption (Scene 3), including their prediction
+flows, progress marks, model-driven audio, heat shading, meters, and energy bar.
+The next stage is **Stage 5: Scene 2 (Reflection)**; Scenes 5 and 6 remain shells.
+
+Validation: `node js/model.js` and `node tests/wall-wave.js`. For browser checks,
+serve the repository on port 3000 with `python3 -m http.server 3000`, then run
+`python3 tests/stage4-browser.py` using an existing Python Playwright and Chromium
+installation. This is optional development tooling; the application has no
+packages or build step. The browser check saves screenshots in a temporary
+folder and reports frame rate under 4x CPU throttling. Human audio review is
+still useful for judging perceived loudness on classroom speakers.
+
+
 Paste everything below the line into Claude Code, in a new empty project folder that already contains CLAUDE.md and scene-navigation.md. If you have them, put screenshots of PhET's Sound Waves and Waves Intro simulations in a `reference/` folder first.
 
 ---

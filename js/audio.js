@@ -19,8 +19,9 @@ SoundSim.audio = (function () {
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) { return false; }
     ctx = new AC();
+    if (paused) { ctx.suspend(); }
     master = ctx.createGain();
-    master.gain.value = MASTER;
+    master.gain.value = paused ? 0 : MASTER;
     master.connect(ctx.destination);
     // One white-noise buffer, reused by every clap.
     noise = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * CLAP_LEN), ctx.sampleRate);
